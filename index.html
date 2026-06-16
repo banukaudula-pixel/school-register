@@ -300,8 +300,8 @@
 
     <div id="generator" class="tab-content">
         <div class="form-group">
-            <label>Registration Number (ඇතුළත් වීමේ අංකය)</label>
-            <input type="text" id="regNo" placeholder="e.g. 1234">
+            <label>Registration Number (ඇතුළත් වීමේ අංකය - Letters Only)</label>
+            <input type="text" id="regNo" placeholder="e.g. ABC" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '');">
         </div>
         <div class="form-group">
             <label>Prefect's Name (සිසුවාගේ නම)</label>
@@ -325,7 +325,7 @@
 
 <script>
     const googleWebAppURL = "https://script.google.com/macros/s/AKfycbyeX47X9IuH3F3_zWyYJ5QYPSoAr6logawXTDTptS52opTZUAWuGVepy7uX5nNwvzZq/exec";
-    const systemPassword = "1978@@ba"; // පොදු මුද්‍රිත මුරපදය
+    const systemPassword = "1978@@ba";
 
     function switchTab(tabId, btn) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -355,7 +355,6 @@
         }
     }
 
-    // List Update ලොජික් එක
     function updateList(data) {
         countSpan.textContent = data.length;
         listDiv.innerHTML = data.map(item => `
@@ -456,7 +455,6 @@
         isProcessing = false;
     });
 
-    // 🔐 PASSWORD PROTECTED CLEAR VIEW LOGIC
     clearBtn.addEventListener('click', () => {
         const passwordInput = prompt("Enter Admin Password to clear local logs:");
         if (passwordInput === null) return;
@@ -471,7 +469,7 @@
         }
     });
 
-    // --- GENERATOR (UPDATED WITH PASSWORD ACCORDING TO YOUR INPUT) ---
+    // --- GENERATOR ---
     const generateBtn = document.getElementById('generateBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const qrcodeDiv = document.getElementById('qrcode');
@@ -486,9 +484,15 @@
             return;
         }
 
-        // 🔐 QR එකක් Generate කරන්න කලින් මුරපදය විමසීම
+        // 🚨 String/Letters Only Validation
+        const letterRegex = /^[a-zA-Z]+$/;
+        if (!letterRegex.test(regNo)) {
+            alert("❌ Registration Number must contain LETTERS ONLY! No numbers or symbols allowed.");
+            return;
+        }
+
         const passwordInput = prompt("Enter Admin Password to Generate QR Code:");
-        if (passwordInput === null) return; // Cancel කළොත් නතර වේ
+        if (passwordInput === null) return;
 
         if (passwordInput !== systemPassword) {
             alert("❌ Incorrect Password! Authorization Failed.");

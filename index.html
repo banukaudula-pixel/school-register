@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>School Prefects Attendance System</title>
+<title>School Prefects Attendance</title>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
@@ -19,42 +19,147 @@
         --border: #e2e8f0;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-    body { background: var(--bg); padding: 20px; color: var(--text); }
-    .container { max-width: 700px; margin: 0 auto; background: var(--card); padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.1); }
-    h1 { text-align: center; color: var(--primary); margin-bottom: 25px; font-size: 26px; }
-    
-    .tabs { display: flex; gap: 8px; margin-bottom: 25px; background: var(--bg); padding: 6px; border-radius: 12px; }
-    .tab-btn { flex: 1; background: transparent; border: none; padding: 12px; cursor: pointer; font-size: 15px; color: #64748b; font-weight: 600; border-radius: 8px; transition: all 0.2s; }
-    .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3); }
-    
-    .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.3s; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+    }
 
-    #reader { width: 100%; border-radius: 12px; overflow: hidden; border: 3px solid var(--primary); }
-    .status { text-align: center; padding: 14px; margin: 15px 0; background: #dbeafe; border-radius: 10px; color: var(--primary-dark); font-weight: 600; border-left: 4px solid var(--primary); }
-    .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
-    
-    button, select { padding: 12px 24px; border: none; border-radius: 10px; font-size: 15px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
-    button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    #startBtn { background: var(--success); color: white; }
-    #stopBtn { background: var(--danger); color: white; }
-    #clearBtn { background: var(--warning); color: white; }
-    #generateBtn, #downloadBtn { width: 100%; background: var(--primary); color: white; margin-top: 10px; }
+    body {
+        background: var(--bg);
+        padding: 20px;
+        color: var(--text);
+    }
 
-    .attendance-list { border-top: 2px solid var(--border); padding-top: 15px; margin-top: 20px; }
-    .attendance-item { padding: 12px; background: var(--bg); margin: 8px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--primary); }
-    .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
-    .form-group input, .form-group select { width: 100%; padding: 13px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; background: white; }
-    #qrcode { margin: 25px auto; display: flex; justify-content: center; padding: 15px; background: white; border-radius: 12px; border: 2px solid var(--border); min-height: 280px; align-items: center; }
-    .error-msg { color: var(--danger); text-align: center; font-size: 14px; }
+    .container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: var(--card);
+        padding: 25px;
+        border-radius: 16px;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .tab-btn {
+        flex: 1;
+        background: none;
+        border: none;
+        padding: 12px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #666;
+    }
+
+    .tab-btn.active {
+        color: #4caf50;
+        border-bottom: 3px solid #4caf50;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        background: white;
+    }
+
+    #generateBtn, #downloadBtn {
+        width: 100%;
+        background: #4caf50;
+        color: white;
+        margin-top: 10px;
+    }
+
+    #qrcode {
+        margin: 20px auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    #reader {
+        width: 100%;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 3px solid #4caf50;
+    }
+
+    .status {
+        text-align: center;
+        padding: 14px;
+        margin: 15px 0;
+        background: #e8f5e9;
+        border-radius: 10px;
+        color: #2e7d32;
+        font-weight: 600;
+    }
+
+    .controls {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .controls button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    #startBtn { background: #4caf50; color: white; }
+    #stopBtn { background: #f44336; color: white; }
+    #clearBtn { background: #ff9800; color: white; }
+
+    .attendance-list {
+        margin-top: 20px;
+        border-top: 2px solid #eee;
+        padding-top: 15px;
+    }
+
+    .attendance-item {
+        padding: 12px;
+        background: #f9f9f9;
+        margin: 8px 0;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 4px solid #4caf50;
+    }
 </style>
 </head>
 <body>
 <div class="container">
-    <h1>School Prefects Attendance</h1>
+    <h1 style="text-align: center; margin-bottom: 20px; color: #333;">School Prefects Attendance</h1>
 
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('scanner', this)">Scanner</button>
@@ -72,13 +177,12 @@
             <button id="clearBtn">Clear Local List</button>
         </div>
         <div class="attendance-list">
-            <h3>Today's Attendance (Local View): <span id="count">0</span> students</h3>
+            <h3>Today's Attendance: <span id="count">0</span> students</h3>
             <div id="list"></div>
         </div>
     </div>
 
     <div id="generator" class="tab-content">
-        <h3 style="margin-bottom: 15px; color: var(--primary);">Create Student QR Code</h3>
         <div class="form-group">
             <label>Registration Number (ඇතුළත් වීමේ අංකය)</label>
             <input type="text" id="regNo" placeholder="1234">
@@ -98,13 +202,13 @@
             </select>
         </div>
         <button id="generateBtn">Generate QR Code</button>
-        <div id="qrcode"><p class="error-msg">QR will appear here</p></div>
+        <div id="qrcode"></div>
         <button id="downloadBtn" style="display:none;">Download QR Image</button>
     </div>
 </div>
 
 <script>
-    // --- GOOGLE WEB APP URL එක මෙතනට දාන්න ---
+    // 🚨 මෙතනට ඔයාගේ GOOGLE WEB APP URL එක අනිවාර්යයෙන්ම දාන්න මල්ලි
     const googleWebAppURL = "https://script.google.com/macros/s/AKfycbxAHSJCEoSGZSpQpWz5FHz44zO6qRg0DY8XPCqZ4qwJW-8zHKdqpmgddYglt_JEt5LA/exec";
 
     function switchTab(tabId, btn) {
@@ -124,6 +228,7 @@
     let html5QrCode = null;
     let scannedToday = new Set();
     let today = new Date().toISOString().split('T')[0];
+    let isProcessing = false; // Duplicate බ්ලොක් කරන ප්‍රධාන flag එක
 
     function loadData() {
         const saved = localStorage.getItem(`attendance_${today}`);
@@ -140,20 +245,21 @@
             <div class="attendance-item">
                 <div>
                     <strong>${item.name}</strong> (${item.designation})<br>
-                    <small style="color:#64748b;">ID: ${item.admissionNo}</small>
+                    <small style="color:#666;">ID: ${item.admissionNo}</small>
                 </div>
-                <span style="color:var(--primary); font-weight:600;">${item.time}</span>
+                <span style="color:#4caf50; font-weight:bold;">${item.time}</span>
             </div>
         `).reverse().join('');
     }
 
-    // QR එක ස්කෑන් වූ පසු ක්‍රියාත්මක වන කොටස
     function onScanSuccess(decodedText) {
+        // 1. දැනටමත් තව QR එකක් process වෙන ගමන් නම් අලුත් ස්කෑන් බ්ලොක් කරයි (Anti-spam)
+        if (isProcessing) return;
+
         try {
-            // QR එකෙන් දත්ත වෙන් කර ගැනීම (Format: RegNo, Name, Designation)
             const parts = decodedText.split(',');
             if (parts.length < 3) {
-                showStatus("⚠️ Invalid QR Format! RegNo, Name, Designation අවශ්‍යයි.", 'error');
+                showStatus("⚠️ Invalid QR Format!", '#f44336', '#ffebee');
                 return;
             }
 
@@ -162,22 +268,32 @@
             const designation = parts[2].trim();
             const time = new Date().toLocaleTimeString();
 
+            // 2. Local Duplicate Check (දැනටමත් අද ලිස්ට් එකේ ඉන්නවා නම් බ්ලොක් කරයි)
             if (scannedToday.has(admissionNo)) {
-                showStatus(`⚠️ ${name} (${designation}) already marked today`, 'warning');
+                isProcessing = true; // තාවකාලිකව කැමරාව හෝල්ඩ් කරයි
+                showStatus(`⚠️ ${name} දැනටමත් ඇතුළත් කර ඇත!`, '#ff9800', '#fff3e0');
+                
+                // තත්පර 3කින් පසු නැවත ස්කෑන් කිරීමට ඉඩ දෙයි
+                setTimeout(() => { 
+                    isProcessing = false; 
+                    showStatus("Scanner active. Point at QR code", '#2e7d32', '#e8f5e9');
+                }, 3000);
                 return;
             }
 
-            showStatus("⏳ Sending data to Google Sheet...", 'warning');
+            // දත්ත යැවීම ආරම්භ වන නිසා scanner එක lock කරයි
+            isProcessing = true;
+            showStatus("⏳ Sending data to Google Sheet...", '#00bcff', '#e0f7ff');
 
-            // --- GOOGLE SHEET එකට දත්ත POST කිරීම (FETCH API) ---
+            // 3. Google Sheet එකට දත්ත යැවීම
             fetch(googleWebAppURL, {
                 method: "POST",
-                mode: "no-cors", // Redirects Handle කිරීමට
+                mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ regNo: admissionNo, name: name, designation: designation })
             })
             .then(() => {
-                // දත්ත සාර්ථකව ගිය පසු Local Screen එකට එකතු කිරීම
+                // සාර්ථකව ගිය පසු Local List එකට එකතු කිරීම
                 scannedToday.add(admissionNo);
                 const saved = localStorage.getItem(`attendance_${today}`);
                 let data = saved ? JSON.parse(saved) : [];
@@ -185,24 +301,31 @@
                 localStorage.setItem(`attendance_${today}`, JSON.stringify(data));
                 updateList(data);
                 
-                showStatus(`✓ ${name} (${designation}) Sent to Google Sheet!`, 'success');
+                showStatus(`✓ ${name} (${designation}) Attendance Marked!`, '#2e7d32', '#e8f5e9');
                 if (navigator.vibrate) navigator.vibrate(100);
+
+                // සාර්ථක ස්කෑන් එකකට පසු ඊළඟ ළමයා එනකම් තත්පර 3ක් කැමරාව නිශ්ක්‍රීයව තබයි
+                setTimeout(() => { 
+                    isProcessing = false; 
+                    showStatus("Scanner active. Point at QR code", '#2e7d32', '#e8f5e9');
+                }, 3000);
             })
             .catch(err => {
-                showStatus("❌ Error uploading to Google Sheet!", 'error');
+                showStatus("❌ Google Sheet Error!", '#f44336', '#ffebee');
+                isProcessing = false; // Error එකක් වුණොත් නැවත ස්කෑන් කරන්න ඉඩ දෙයි
                 console.error(err);
             });
 
         } catch (e) {
-            showStatus("Error reading QR code", 'error');
+            showStatus("Error reading QR code", '#f44336', '#ffebee');
+            isProcessing = false;
         }
     }
 
-    function showStatus(msg, type) {
+    function showStatus(msg, textColor, bgColor) {
         statusText.textContent = msg;
-        if(type === 'success') { statusText.style.background = '#dcfce7'; statusText.style.color = '#166534'; statusText.style.borderLeftColor = 'var(--success)'; }
-        else if(type === 'warning') { statusText.style.background = '#fef3c7'; statusText.style.color = '#92400e'; statusText.style.borderLeftColor = 'var(--warning)'; }
-        else { statusText.style.background = '#fee2e2'; statusText.style.color = '#991b1b'; statusText.style.borderLeftColor = 'var(--danger)'; }
+        statusText.parentElement.style.background = bgColor;
+        statusText.parentElement.style.color = textColor;
     }
 
     startBtn.addEventListener('click', async () => {
@@ -210,24 +333,25 @@
             html5QrCode = new Html5Qrcode("reader");
             await html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, onScanSuccess, () => {});
             startBtn.style.display = 'none'; stopBtn.style.display = 'inline-block';
-            showStatus("Scanner active. Point at QR code", 'success');
-        } catch(err) { showStatus("Camera error: " + err.message, 'error'); }
+            showStatus("Scanner active. Point at QR code", '#2e7d32', '#e8f5e9');
+        } catch(err) { showStatus("Camera error: " + err.message, '#f44336', '#ffebee'); }
     });
 
     stopBtn.addEventListener('click', () => {
         if(html5QrCode) { html5QrCode.stop(); html5QrCode = null; }
         startBtn.style.display = 'inline-block'; stopBtn.style.display = 'none';
-        showStatus("Scanner stopped", 'warning');
+        showStatus("Scanner stopped", '#ff9800', '#fff3e0');
+        isProcessing = false;
     });
 
     clearBtn.addEventListener('click', () => {
         if (confirm("Clear local screen list? (Sheet data will NOT be deleted)")) {
             localStorage.removeItem(`attendance_${today}`); scannedToday.clear(); updateList([]);
-            showStatus("Local view cleared", 'warning');
+            showStatus("Local view cleared", '#ff9800', '#fff3e0');
         }
     });
 
-    // --- QR GENERATOR LOGIC (UPDATED WITH DESIGNATION) ---
+    // --- GENERATOR LOGIC ---
     const generateBtn = document.getElementById('generateBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const qrcodeDiv = document.getElementById('qrcode');
@@ -242,19 +366,19 @@
             return;
         }
 
-        // දත්ත 3ම කමා (comma) මඟින් වෙන් කර QR එක සාදයි
+        // දත්ත 3ම කමා (comma) වලින් වෙන් කර QR එකට දමයි
         const qrData = `${regNo},${name},${designation}`;
         qrcodeDiv.innerHTML = "";
 
         try {
             new QRCode(qrcodeDiv, {
                 text: qrData, width: 250, height: 250,
-                colorDark: "#2563eb", colorLight: "#ffffff",
+                colorDark: "#000000", colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
             downloadBtn.style.display = 'block';
         } catch(e) {
-            qrcodeDiv.innerHTML = '<p class="error-msg">Error generating QR. Try again.</p>';
+            qrcodeDiv.innerHTML = '<p style="color:red;">Error generating QR.</p>';
         }
     });
 

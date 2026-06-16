@@ -11,7 +11,7 @@
         --primary: #1e40af;
         --primary-light: #3b82f6;
         --primary-accent: #eff6ff;
-        --success: #10b981;A
+        --success: #10b981;
         --warning: #f59e0b;
         --danger: #ef4444;
         --bg: #f8fafc;
@@ -300,8 +300,8 @@
 
     <div id="generator" class="tab-content">
         <div class="form-group">
-            <label>Registration Number (ඇතුළත් වීමේ අංකය - Letters Only)</label>
-            <input type="text" id="regNo" placeholder="e.g. ABC" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '');">
+            <label>Registration Number (ඇතුළත් වීමේ අංකය - Numbers Only)</label>
+            <input type="text" id="regNo" placeholder="e.g. 1234" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
         </div>
         <div class="form-group">
             <label>Prefect's Name (සිසුවාගේ නම)</label>
@@ -484,10 +484,10 @@
             return;
         }
 
-        // 🚨 String/Letters Only Validation
-        const letterRegex = /^[a-zA-Z]+$/;
-        if (!letterRegex.test(regNo)) {
-            alert("❌ Registration Number must contain LETTERS ONLY! No numbers or symbols allowed.");
+        // 🚨 Integer/Numbers Only Validation (ඉලක්කම් විතරක්මද කියා චෙක් කිරීම)
+        const numberRegex = /^[0-9]+$/;
+        if (!numberRegex.test(regNo)) {
+            alert("❌ Registration Number must contain NUMBERS ONLY!");
             return;
         }
 

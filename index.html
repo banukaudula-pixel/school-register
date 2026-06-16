@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>School Prefects Attendance</title>
+<title>School Prefects Attendance System</title>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
@@ -19,197 +19,37 @@
         --border: #e2e8f0;
     }
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Segoe UI', system-ui, Arial, sans-serif;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+    body { background: var(--bg); padding: 20px; color: var(--text); }
+    .container { max-width: 700px; margin: 0 auto; background: var(--card); padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.1); }
+    h1 { text-align: center; color: var(--primary); margin-bottom: 25px; font-size: 26px; }
+    
+    .tabs { display: flex; gap: 8px; margin-bottom: 25px; background: var(--bg); padding: 6px; border-radius: 12px; }
+    .tab-btn { flex: 1; background: transparent; border: none; padding: 12px; cursor: pointer; font-size: 15px; color: #64748b; font-weight: 600; border-radius: 8px; transition: all 0.2s; }
+    .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3); }
+    
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    body {
-        background: var(--bg);
-        padding: 20px;
-        color: var(--text);
-    }
-
-  .container {
-        max-width: 700px;
-        margin: 0 auto;
-        background: var(--card);
-        padding: 25px;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(37, 99, 235, 0.1);
-    }
-
-    h1 {
-        text-align: center;
-        color: var(--primary);
-        margin-bottom: 25px;
-        font-size: 26px;
-    }
-
-  .tabs {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 25px;
-        background: var(--bg);
-        padding: 6px;
-        border-radius: 12px;
-    }
-
-  .tab-btn {
-        flex: 1;
-        background: transparent;
-        border: none;
-        padding: 12px;
-        cursor: pointer;
-        font-size: 15px;
-        color: #64748b;
-        font-weight: 600;
-        border-radius: 8px;
-        transition: all 0.2s;
-    }
-
-  .tab-btn.active {
-        background: var(--primary);
-        color: white;
-        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
-    }
-
-  .tab-content {
-        display: none;
-    }
-
-  .tab-content.active {
-        display: block;
-        animation: fadeIn 0.3s;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    #reader {
-        width: 100%;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 3px solid var(--primary);
-    }
-
-  .status {
-        text-align: center;
-        padding: 14px;
-        margin: 15px 0;
-        background: #dbeafe;
-        border-radius: 10px;
-        color: var(--primary-dark);
-        font-weight: 600;
-        border-left: 4px solid var(--primary);
-    }
-
-  .controls {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-    }
-
-    button {
-        padding: 12px 24px;
-        border: none;
-        border-radius: 10px;
-        font-size: 15px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.2s;
-    }
-
-    button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-
+    #reader { width: 100%; border-radius: 12px; overflow: hidden; border: 3px solid var(--primary); }
+    .status { text-align: center; padding: 14px; margin: 15px 0; background: #dbeafe; border-radius: 10px; color: var(--primary-dark); font-weight: 600; border-left: 4px solid var(--primary); }
+    .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+    
+    button, select { padding: 12px 24px; border: none; border-radius: 10px; font-size: 15px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     #startBtn { background: var(--success); color: white; }
     #stopBtn { background: var(--danger); color: white; }
     #clearBtn { background: var(--warning); color: white; }
-    #generateBtn, #downloadBtn {
-        width: 100%;
-        background: var(--primary);
-        color: white;
-        margin-top: 10px;
-    }
+    #generateBtn, #downloadBtn { width: 100%; background: var(--primary); color: white; margin-top: 10px; }
 
-  .attendance-list {
-        border-top: 2px solid var(--border);
-        padding-top: 15px;
-        margin-top: 20px;
-    }
-
-  .attendance-item {
-        padding: 12px;
-        background: var(--bg);
-        margin: 8px 0;
-        border-radius: 8px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-left: 3px solid var(--primary);
-    }
-
-  .form-group {
-        margin-bottom: 18px;
-    }
-
-  .form-group label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 600;
-        color: var(--text);
-    }
-
-  .form-group input {
-        width: 100%;
-        padding: 13px;
-        border: 2px solid var(--border);
-        border-radius: 10px;
-        font-size: 15px;
-    }
-
-  .form-group input:focus {
-        outline: none;
-        border-color: var(--primary);
-    }
-
-    #qrcode {
-        margin: 25px auto;
-        display: flex;
-        justify-content: center;
-        padding: 15px;
-        background: white;
-        border-radius: 12px;
-        border: 2px solid var(--border);
-        min-height: 280px;
-        align-items: center;
-    }
-
-   .error-msg {
-        color: var(--danger);
-        text-align: center;
-        font-size: 14px;
-    }
-
-    @media (max-width: 600px) {
-      .container { padding: 15px; }
-      .controls { flex-direction: column; }
-        button { width: 100%; }
-    }
+    .attendance-list { border-top: 2px solid var(--border); padding-top: 15px; margin-top: 20px; }
+    .attendance-item { padding: 12px; background: var(--bg); margin: 8px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--primary); }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
+    .form-group input, .form-group select { width: 100%; padding: 13px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; background: white; }
+    #qrcode { margin: 25px auto; display: flex; justify-content: center; padding: 15px; background: white; border-radius: 12px; border: 2px solid var(--border); min-height: 280px; align-items: center; }
+    .error-msg { color: var(--danger); text-align: center; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -221,7 +61,6 @@
         <button class="tab-btn" onclick="switchTab('generator', this)">QR Generator</button>
     </div>
 
-    <!-- Scanner Tab -->
     <div id="scanner" class="tab-content active">
         <div id="reader"></div>
         <div class="status">
@@ -230,24 +69,33 @@
         <div class="controls">
             <button id="startBtn">Start Scanner</button>
             <button id="stopBtn" style="display:none;">Stop Scanner</button>
-            <button id="clearBtn">Clear Data</button>
+            <button id="clearBtn">Clear Local List</button>
         </div>
         <div class="attendance-list">
-            <h3>Today's Attendance: <span id="count">0</span> students</h3>
+            <h3>Today's Attendance (Local View): <span id="count">0</span> students</h3>
             <div id="list"></div>
         </div>
     </div>
 
-    <!-- Generator Tab -->
     <div id="generator" class="tab-content">
         <h3 style="margin-bottom: 15px; color: var(--primary);">Create Student QR Code</h3>
         <div class="form-group">
-            <label>Registration Number</label>
+            <label>Registration Number (ඇතුළත් වීමේ අංකය)</label>
             <input type="text" id="regNo" placeholder="1234">
         </div>
         <div class="form-group">
-            <label>Prefect's Name</label>
-            <input type="text" id="studentName" placeholder="Nimal Perera">
+            <label>Prefect's Name (සිසුවාගේ නම)</label>
+            <input type="text" id="studentName" placeholder="Nishan Madushanka">
+        </div>
+        <div class="form-group">
+            <label>Designation / Role (තනතුර)</label>
+            <select id="designation">
+                <option value="Prefect">Prefect (ශිෂ්‍ය නායක)</option>
+                <option value="Senior Prefect">Senior Prefect</option>
+                <option value="Deputy Head Prefect">Deputy Head Prefect</option>
+                <option value="Head Prefect">Head Prefect</option>
+                <option value="Student">Regular Student</option>
+            </select>
         </div>
         <button id="generateBtn">Generate QR Code</button>
         <div id="qrcode"><p class="error-msg">QR will appear here</p></div>
@@ -256,16 +104,9 @@
 </div>
 
 <script>
-    // Check if QRCode library loaded
-    window.addEventListener('load', () => {
-        if(typeof QRCode === 'undefined') {
-            document.getElementById('qrcode').innerHTML =
-                '<p class="error-msg">Error: QR Library not loaded. Check internet connection and refresh.</p>';
-            document.getElementById('generateBtn').disabled = true;
-        }
-    });
+    // --- GOOGLE WEB APP URL එක මෙතනට දාන්න ---
+    const googleWebAppURL = "YOUR_GOOGLE_WEB_APP_URL";
 
-    // Tab Switch
     function switchTab(tabId, btn) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -273,7 +114,6 @@
         btn.classList.add('active');
     }
 
-    // Scanner Logic
     const startBtn = document.getElementById('startBtn');
     const stopBtn = document.getElementById('stopBtn');
     const clearBtn = document.getElementById('clearBtn');
@@ -294,49 +134,64 @@
         }
     }
 
-    function saveData(admissionNo, name, time) {
-        const saved = localStorage.getItem(`attendance_${today}`);
-        let data = saved? JSON.parse(saved) : [];
-        data.push({ admissionNo, name, time });
-        localStorage.setItem(`attendance_${today}`, JSON.stringify(data));
-        updateList(data);
-    }
-
     function updateList(data) {
         countSpan.textContent = data.length;
         listDiv.innerHTML = data.map(item => `
             <div class="attendance-item">
                 <div>
-                    <strong>${item.name}</strong><br>
-                    <small style="color:#64748b;">${item.admissionNo}</small>
+                    <strong>${item.name}</strong> (${item.designation})<br>
+                    <small style="color:#64748b;">ID: ${item.admissionNo}</small>
                 </div>
                 <span style="color:var(--primary); font-weight:600;">${item.time}</span>
             </div>
         `).reverse().join('');
     }
 
+    // QR එක ස්කෑන් වූ පසු ක්‍රියාත්මක වන කොටස
     function onScanSuccess(decodedText) {
         try {
+            // QR එකෙන් දත්ත වෙන් කර ගැනීම (Format: RegNo, Name, Designation)
             const parts = decodedText.split(',');
-            if (parts.length < 2) {
-                showStatus("Invalid QR! Format: RegNo, Name", 'error');
+            if (parts.length < 3) {
+                showStatus("⚠️ Invalid QR Format! RegNo, Name, Designation අවශ්‍යයි.", 'error');
                 return;
             }
 
             const admissionNo = parts[0].trim();
             const name = parts[1].trim();
+            const designation = parts[2].trim();
             const time = new Date().toLocaleTimeString();
 
             if (scannedToday.has(admissionNo)) {
-                showStatus(`${name} already marked today`, 'warning');
+                showStatus(`⚠️ ${name} (${designation}) already marked today`, 'warning');
                 return;
             }
 
-            scannedToday.add(admissionNo);
-            saveData(admissionNo, name, time);
-            showStatus(`✓ ${name} marked at ${time}`, 'success');
+            showStatus("⏳ Sending data to Google Sheet...", 'warning');
 
-            if (navigator.vibrate) navigator.vibrate(100);
+            // --- GOOGLE SHEET එකට දත්ත POST කිරීම (FETCH API) ---
+            fetch(googleWebAppURL, {
+                method: "POST",
+                mode: "no-cors", // Redirects Handle කිරීමට
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ regNo: admissionNo, name: name, designation: designation })
+            })
+            .then(() => {
+                // දත්ත සාර්ථකව ගිය පසු Local Screen එකට එකතු කිරීම
+                scannedToday.add(admissionNo);
+                const saved = localStorage.getItem(`attendance_${today}`);
+                let data = saved ? JSON.parse(saved) : [];
+                data.push({ admissionNo, name, designation, time });
+                localStorage.setItem(`attendance_${today}`, JSON.stringify(data));
+                updateList(data);
+                
+                showStatus(`✓ ${name} (${designation}) Sent to Google Sheet!`, 'success');
+                if (navigator.vibrate) navigator.vibrate(100);
+            })
+            .catch(err => {
+                showStatus("❌ Error uploading to Google Sheet!", 'error');
+                console.error(err);
+            });
 
         } catch (e) {
             showStatus("Error reading QR code", 'error');
@@ -345,58 +200,34 @@
 
     function showStatus(msg, type) {
         statusText.textContent = msg;
-        if(type === 'success') {
-            statusText.style.background = '#dcfce7';
-            statusText.style.color = '#166534';
-            statusText.style.borderLeftColor = 'var(--success)';
-        } else if(type === 'warning') {
-            statusText.style.background = '#fef3c7';
-            statusText.style.color = '#92400e';
-            statusText.style.borderLeftColor = 'var(--warning)';
-        } else {
-            statusText.style.background = '#fee2e2';
-            statusText.style.color = '#991b1b';
-            statusText.style.borderLeftColor = 'var(--danger)';
-        }
+        if(type === 'success') { statusText.style.background = '#dcfce7'; statusText.style.color = '#166534'; statusText.style.borderLeftColor = 'var(--success)'; }
+        else if(type === 'warning') { statusText.style.background = '#fef3c7'; statusText.style.color = '#92400e'; statusText.style.borderLeftColor = 'var(--warning)'; }
+        else { statusText.style.background = '#fee2e2'; statusText.style.color = '#991b1b'; statusText.style.borderLeftColor = 'var(--danger)'; }
     }
 
     startBtn.addEventListener('click', async () => {
         try {
             html5QrCode = new Html5Qrcode("reader");
-            await html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 250 } },
-                onScanSuccess,
-                () => {}
-            );
-            startBtn.style.display = 'none';
-            stopBtn.style.display = 'inline-block';
+            await html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, onScanSuccess, () => {});
+            startBtn.style.display = 'none'; stopBtn.style.display = 'inline-block';
             showStatus("Scanner active. Point at QR code", 'success');
-        } catch(err) {
-            showStatus("Camera error: " + err.message, 'error');
-        }
+        } catch(err) { showStatus("Camera error: " + err.message, 'error'); }
     });
 
     stopBtn.addEventListener('click', () => {
-        if(html5QrCode) {
-            html5QrCode.stop();
-            html5QrCode = null;
-        }
-        startBtn.style.display = 'inline-block';
-        stopBtn.style.display = 'none';
+        if(html5QrCode) { html5QrCode.stop(); html5QrCode = null; }
+        startBtn.style.display = 'inline-block'; stopBtn.style.display = 'none';
         showStatus("Scanner stopped", 'warning');
     });
 
     clearBtn.addEventListener('click', () => {
-        if (confirm("Clear today's attendance data?")) {
-            localStorage.removeItem(`attendance_${today}`);
-            scannedToday.clear();
-            updateList([]);
-            showStatus("Data cleared successfully", 'warning');
+        if (confirm("Clear local screen list? (Sheet data will NOT be deleted)")) {
+            localStorage.removeItem(`attendance_${today}`); scannedToday.clear(); updateList([]);
+            showStatus("Local view cleared", 'warning');
         }
     });
 
-    // QR Generator Logic - FIXED
+    // --- QR GENERATOR LOGIC (UPDATED WITH DESIGNATION) ---
     const generateBtn = document.getElementById('generateBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const qrcodeDiv = document.getElementById('qrcode');
@@ -404,50 +235,35 @@
     generateBtn.addEventListener('click', () => {
         const regNo = document.getElementById('regNo').value.trim();
         const name = document.getElementById('studentName').value.trim();
+        const designation = document.getElementById('designation').value;
 
-        if (!regNo ||!name) {
+        if (!regNo || !name) {
             alert("Please enter both Registration Number and Name");
             return;
         }
 
-        if(typeof QRCode === 'undefined') {
-            alert("QR Library not loaded. Please refresh the page.");
-            return;
-        }
-
-        const qrData = `${regNo}, ${name}`;
+        // දත්ත 3ම කමා (comma) මඟින් වෙන් කර QR එක සාදයි
+        const qrData = `${regNo},${name},${designation}`;
         qrcodeDiv.innerHTML = "";
 
         try {
             new QRCode(qrcodeDiv, {
-                text: qrData,
-                width: 250,
-                height: 250,
-                colorDark: "#2563eb",
-                colorLight: "#ffffff",
+                text: qrData, width: 250, height: 250,
+                colorDark: "#2563eb", colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
             downloadBtn.style.display = 'block';
         } catch(e) {
             qrcodeDiv.innerHTML = '<p class="error-msg">Error generating QR. Try again.</p>';
-            console.error(e);
         }
     });
 
     downloadBtn.addEventListener('click', () => {
         const canvas = qrcodeDiv.querySelector('canvas');
         const img = qrcodeDiv.querySelector('img');
-
-        let dataUrl = '';
-        if(canvas) {
-            dataUrl = canvas.toDataURL('image/png');
-        } else if(img) {
-            dataUrl = img.src;
-        }
-
+        let dataUrl = canvas ? canvas.toDataURL('image/png') : (img ? img.src : '');
         if(dataUrl) {
-            const a = document.createElement('a');
-            a.href = dataUrl;
+            const a = document.createElement('a'); a.href = dataUrl;
             a.download = `${document.getElementById('regNo').value}_QR.png`;
             a.click();
         }

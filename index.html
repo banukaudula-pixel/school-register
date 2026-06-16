@@ -180,7 +180,6 @@
         box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     }
 
-    /* html5-qrcode ඇතුලේ තියෙන අනවශ්‍ය බටන් සහ වීඩියෝ ලස්සන කිරීම */
     #reader video { border-radius: 14px; }
     #reader img { display: none !important; }
 
@@ -242,11 +241,6 @@
         to { opacity: 1; transform: scale(1); }
     }
 
-    .attendance-item depth {
-        display: flex;
-        flex-direction: column;
-    }
-
     .student-name {
         font-weight: 700;
         color: var(--text);
@@ -288,6 +282,7 @@
         <button class="tab-btn" onclick="switchTab('generator', this)">QR Generator</button>
     </div>
 
+    <!-- Scanner Tab -->
     <div id="scanner" class="tab-content active">
         <div id="reader"></div>
         <div class="status-container">
@@ -304,6 +299,7 @@
         </div>
     </div>
 
+    <!-- Generator Tab -->
     <div id="generator" class="tab-content">
         <div class="form-group">
             <label>Registration Number (ඇතුළත් වීමේ අංකය)</label>
@@ -330,7 +326,6 @@
 </div>
 
 <script>
-    // 🔗 ඔයා එවපු Google Sheets Web App URL එක කෙලින්ම මෙතනට දැම්මා මල්ලි
     const googleWebAppURL = "https://script.google.com/macros/s/AKfycbyeX47X9IuH3F3_zWyYJ5QYPSoAr6logawXTDTptS52opTZUAWuGVepy7uX5nNwvzZq/exec";
 
     function switchTab(tabId, btn) {
@@ -461,10 +456,21 @@
         isProcessing = false;
     });
 
+    // 🔐 PASSWORD PROTECTED CLEAR VIEW LOGIC
     clearBtn.addEventListener('click', () => {
-        if (confirm("Clear local screen logs? (Google Sheet data safe)")) {
-            localStorage.removeItem(`attendance_${today}`); scannedToday.clear(); updateList([]);
-            showStatus("Local logs cleared", '#64748b', '#f1f5f9', '#cbd5e1');
+        const passwordInput = prompt("Enter Admin Password to clear local logs:");
+        
+        if (passwordInput === null) {
+            return; // Cancel කළොත් කිසිවක් වෙන්නේ නැත
+        }
+        
+        if (passwordInput === "1978@@ba") {
+            localStorage.removeItem(`attendance_${today}`); 
+            scannedToday.clear(); 
+            updateList([]);
+            showStatus("Local logs cleared successfully", '#64748b', '#f1f5f9', '#cbd5e1');
+        } else {
+            alert("❌ Incorrect Password! Access Denied.");
         }
     });
 

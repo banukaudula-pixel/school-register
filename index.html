@@ -282,7 +282,6 @@
         <button class="tab-btn" onclick="switchTab('generator', this)">QR Generator</button>
     </div>
 
-    <!-- Scanner Tab -->
     <div id="scanner" class="tab-content active">
         <div id="reader"></div>
         <div class="status-container">
@@ -299,7 +298,6 @@
         </div>
     </div>
 
-    <!-- Generator Tab -->
     <div id="generator" class="tab-content">
         <div class="form-group">
             <label>Registration Number (ඇතුළත් වීමේ අංකය)</label>
@@ -327,6 +325,7 @@
 
 <script>
     const googleWebAppURL = "https://script.google.com/macros/s/AKfycbyeX47X9IuH3F3_zWyYJ5QYPSoAr6logawXTDTptS52opTZUAWuGVepy7uX5nNwvzZq/exec";
+    const systemPassword = "1978@@ba"; // පොදු මුද්‍රිත මුරපදය
 
     function switchTab(tabId, btn) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -356,6 +355,7 @@
         }
     }
 
+    // List Update ලොජික් එක
     function updateList(data) {
         countSpan.textContent = data.length;
         listDiv.innerHTML = data.map(item => `
@@ -459,12 +459,9 @@
     // 🔐 PASSWORD PROTECTED CLEAR VIEW LOGIC
     clearBtn.addEventListener('click', () => {
         const passwordInput = prompt("Enter Admin Password to clear local logs:");
+        if (passwordInput === null) return;
         
-        if (passwordInput === null) {
-            return; // Cancel කළොත් කිසිවක් වෙන්නේ නැත
-        }
-        
-        if (passwordInput === "1978@@ba") {
+        if (passwordInput === systemPassword) {
             localStorage.removeItem(`attendance_${today}`); 
             scannedToday.clear(); 
             updateList([]);
@@ -474,7 +471,7 @@
         }
     });
 
-    // --- GENERATOR ---
+    // --- GENERATOR (UPDATED WITH PASSWORD ACCORDING TO YOUR INPUT) ---
     const generateBtn = document.getElementById('generateBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const qrcodeDiv = document.getElementById('qrcode');
@@ -486,6 +483,15 @@
 
         if (!regNo || !name) {
             alert("Please fill in all standard details!");
+            return;
+        }
+
+        // 🔐 QR එකක් Generate කරන්න කලින් මුරපදය විමසීම
+        const passwordInput = prompt("Enter Admin Password to Generate QR Code:");
+        if (passwordInput === null) return; // Cancel කළොත් නතර වේ
+
+        if (passwordInput !== systemPassword) {
+            alert("❌ Incorrect Password! Authorization Failed.");
             return;
         }
 
